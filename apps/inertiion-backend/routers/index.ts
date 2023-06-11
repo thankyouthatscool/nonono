@@ -9,11 +9,7 @@ const router = t.router;
 export const appRouter = router({
   test: publicProcedure
     .input(z.object({ testString: z.string().optional() }))
-    .query(({ input: { testString } }) =>
-      !!testString
-        ? `${testString} - this is the received test string- OK`
-        : "No test string - OK"
-    ),
+    .query(() => "OK"),
 });
 
 export type AppRouter = typeof appRouter;
