@@ -13,6 +13,7 @@ export const App = () => {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
     trpc.createClient({
+      // TODO: Turn this into an env variable. Will need to use the constants package.
       links: [httpBatchLink({ url: "http:192.168.0.8:5000/trpc" })],
     })
   );
