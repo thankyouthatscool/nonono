@@ -4,6 +4,8 @@ import { View } from "react-native";
 import { Button, Searchbar, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { DEFAULT_APP_PADDING } from "@theme";
+
 export const AppRoot = () => {
   const [bottomSheetIndex, setBottomSheetIndex] = useState<number>(-1);
   const [invisiblePaddingHeight, setInvisiblePaddingHeight] =
@@ -30,7 +32,7 @@ export const AppRoot = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, width: "100%" }}>
-      <View style={{ margin: 8 }}>
+      <View style={{ margin: DEFAULT_APP_PADDING }}>
         <Text>This is how we do!</Text>
         <Button
           mode="elevated"
@@ -46,7 +48,7 @@ export const AppRoot = () => {
         style={{
           flexDirection: "row",
           justifyContent: "space-evenly",
-          margin: 8,
+          margin: DEFAULT_APP_PADDING,
         }}
       >
         <Button
@@ -90,7 +92,7 @@ export const AppRoot = () => {
         <View
           style={{
             flex: 1,
-            margin: 8,
+            margin: DEFAULT_APP_PADDING,
             marginTop: 11,
           }}
         >
@@ -109,7 +111,7 @@ export const AppRoot = () => {
             }}
             style={{
               backgroundColor: "rgba(255, 255, 255, 0.75)",
-              paddingBottom: 8,
+              paddingBottom: DEFAULT_APP_PADDING,
               position: "absolute",
               width: "100%",
             }}
