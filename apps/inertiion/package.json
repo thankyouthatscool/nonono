@@ -1,5 +1,5 @@
 {
-  "name": "inertiion",
+  "name": "@nonono/inertiion",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -8,6 +8,12 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^4",
+    "@nonono/inertiion-backend": "*",
+    "@tanstack/react-query": "^4.29.12",
+    "@trpc/client": "^10.29.1",
+    "@trpc/react": "^9.27.4",
+    "@trpc/react-query": "^10.29.1",
+    "@trpc/server": "^10.29.1",
     "expo": "~48.0.18",
     "expo-status-bar": "~1.4.4",
     "react": "18.2.0",
