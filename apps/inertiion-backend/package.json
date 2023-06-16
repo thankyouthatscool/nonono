@@ -5,9 +5,15 @@
   "types": "index.ts",
   "license": "MIT",
   "scripts": {
-    "dev": "dotenv -e .env nodemon"
+    "db:generate": "yarn prisma generate",
+    "db:migrate": "yarn prisma migrate reset",
+    "db:migrate:new": "yarn prisma migrate dev --name",
+    "db:seed": "dotenv -e .env ts-node ./utils/seed/seed.ts",
+    "dev": "dotenv -e .env nodemon",
+    "start:services": "docker compose up -d"
   },
   "dependencies": {
+    "@prisma/client": "^4.15.0",
     "@trpc/server": "^10.29.1",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
@@ -19,6 +25,7 @@
     "@types/multer": "^1.4.7",
     "dotenv-cli": "^7.2.1",
     "nodemon": "^2.0.22",
+    "prisma": "^4.15.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3"
   }

@@ -1,0 +1,10 @@
+{
+  "overrides": [
+    {
+      "files": ["catalogData.ts", "storageData.ts"],
+      "options": {
+        "printWidth": 150
+      }
+    }
+  ]
+}

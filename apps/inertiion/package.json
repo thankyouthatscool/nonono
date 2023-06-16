@@ -9,6 +9,7 @@
   "dependencies": {
     "@gorhom/bottom-sheet": "^4",
     "@nonono/inertiion-backend": "*",
+    "@react-native-async-storage/async-storage": "1.17.11",
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/drawer": "^6.6.2",
     "@react-navigation/material-bottom-tabs": "^6.2.15",
@@ -21,6 +22,8 @@
     "@trpc/server": "^10.29.1",
     "expo": "~48.0.18",
     "expo-constants": "~14.2.1",
+    "expo-secure-store": "~12.1.1",
+    "expo-sqlite": "~11.1.1",
     "expo-status-bar": "~1.4.4",
     "react": "18.2.0",
     "react-native": "0.71.8",

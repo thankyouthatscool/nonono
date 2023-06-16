@@ -7,6 +7,7 @@ import { resolve } from "path";
 
 import { appRouter } from "./routers";
 
+export type { CatalogItem, Storage } from "@prisma/client";
 export type { AppRouter } from "./routers";
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
