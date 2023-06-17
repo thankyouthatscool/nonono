@@ -1,6 +1,6 @@
 import BottomSheet from "@gorhom/bottom-sheet";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Dimensions, View } from "react-native";
 import { Text } from "react-native-paper";
 
@@ -10,6 +10,10 @@ import { HomeScreenRoot } from "@screens/HomeScreen";
 import { SettingsScreen } from "@screens/SettingsScreen";
 import { setBottomSheetContent } from "@store";
 import { RootDrawerNavigationProps } from "@types";
+import {
+  sqlStatementCreateCatalogItemsTable,
+  sqlStatementCreateStorageTable,
+} from "@utils";
 
 const RootDrawer = createDrawerNavigator<RootDrawerNavigationProps>();
 
@@ -18,7 +22,9 @@ const { height: screenHeight } = Dimensions.get("window");
 export const AppRoot = () => {
   const dispatch = useAppDispatch();
 
-  const { bottomSheetContent } = useAppSelector(({ app }) => ({ ...app }));
+  const { bottomSheetContent, databaseInstance: db } = useAppSelector(
+    ({ app }) => ({ ...app })
+  );
 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -34,9 +40,22 @@ export const AppRoot = () => {
     }
   }, [bottomSheetContent]);
 
+  useEffect(() => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql(sqlStatementCreateCatalogItemsTable);
+        tx.executeSql(sqlStatementCreateStorageTable);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }, []);
+
   return (
     <View style={{ flex: 1 }}>
       <RootDrawer.Navigator
+        initialRouteName="Settings"
         screenOptions={{
           headerShown: false,
         }}

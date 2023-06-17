@@ -21,6 +21,7 @@
     "@trpc/react-query": "^10.29.1",
     "@trpc/server": "^10.29.1",
     "expo": "~48.0.18",
+    "expo-checkbox": "~2.3.1",
     "expo-constants": "~14.2.1",
     "expo-secure-store": "~12.1.1",
     "expo-sqlite": "~11.1.1",
