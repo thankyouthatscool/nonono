@@ -8,7 +8,7 @@ import { NewCatalogItemForm } from "@components/NewCatalogItemForm";
 import { useAppDispatch, useAppSelector } from "@hooks";
 import { HomeScreenRoot } from "@screens/HomeScreen";
 import { SettingsScreen } from "@screens/SettingsScreen";
-import { setBottomSheetContent } from "@store";
+import { getAppSettings, setBottomSheetContent } from "@store";
 import { RootDrawerNavigationProps } from "@types";
 import {
   sqlStatementCreateCatalogItemsTable,
@@ -30,6 +30,22 @@ export const AppRoot = () => {
 
   const snapPoints = useMemo(() => [screenHeight], []);
 
+  const handleInitialLoad = useCallback(async () => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql(sqlStatementCreateCatalogItemsTable);
+        tx.executeSql(sqlStatementCreateStorageTable);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+
+    const { payload } = await dispatch(getAppSettings());
+
+    console.log(payload);
+  }, []);
+
   useEffect(() => {
     if (bottomSheetContent === "newCatalogItem") {
       bottomSheetRef.current?.snapToIndex(0);
@@ -41,15 +57,7 @@ export const AppRoot = () => {
   }, [bottomSheetContent]);
 
   useEffect(() => {
-    db.transaction(
-      (tx) => {
-        tx.executeSql(sqlStatementCreateCatalogItemsTable);
-        tx.executeSql(sqlStatementCreateStorageTable);
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+    handleInitialLoad();
   }, []);
 
   return (

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "dotenv -e .env expo start",
+    "start": "dotenv -e .env expo start -c",
     "android": "expo start --android"
   },
   "dependencies": {

@@ -1,15 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { AppSettings, AppSettingsKeys, DEFAULT_APP_SETTINGS } from "@types";
+
 enum LocalStorageKeys {
   APP_SETTINGS = "appSettings",
   CHECKED_ITEM_QUEUE = "checkedItemQueue",
   IS_CHECKED_QUEUE_HIDDEN = "isCheckedQueueHidden",
   ITEM_QUEUE = "itemQueue",
   SEARCH_TERM = "searchTerm",
-}
-
-export enum AppSettings {
-  IS_DATABASE_LIVE_EDITS = "isDatabaseLiveEdits",
 }
 
 // Item Queue
@@ -26,7 +24,7 @@ export const getSearchTerm = async () => {
   const resString = await AsyncStorage.getItem(LocalStorageKeys.SEARCH_TERM);
 
   if (!!resString) {
-    const searchTerm = JSON.parse(resString) as string;
+    const searchTerm = JSON.parse(resString);
 
     return searchTerm;
   }
@@ -35,13 +33,11 @@ export const getSearchTerm = async () => {
 };
 
 // App Settings
-export const setAppSettings = async (setting: AppSettings, data: any) => {
+export const setAppSettings = async (setting: AppSettingsKeys, data: any) => {
   const resString = await AsyncStorage.getItem(LocalStorageKeys.APP_SETTINGS);
 
   if (!!resString) {
-    const appSettings = JSON.parse(resString) as {
-      [AppSettings.IS_DATABASE_LIVE_EDITS]: boolean;
-    };
+    const appSettings = JSON.parse(resString) as AppSettings;
 
     await AsyncStorage.setItem(
       LocalStorageKeys.APP_SETTINGS,
@@ -50,7 +46,7 @@ export const setAppSettings = async (setting: AppSettings, data: any) => {
   } else {
     await AsyncStorage.setItem(
       LocalStorageKeys.APP_SETTINGS,
-      JSON.stringify({ [setting]: data })
+      JSON.stringify({ ...DEFAULT_APP_SETTINGS, [setting]: data })
     );
   }
 };
@@ -59,21 +55,19 @@ export const getAppSettings = async () => {
   const resString = await AsyncStorage.getItem(LocalStorageKeys.APP_SETTINGS);
 
   if (!!resString) {
-    const appSettings = JSON.parse(resString) as {
-      isDatabaseLiveEdits: boolean;
-    };
+    const appSettings = JSON.parse(resString) as AppSettings;
 
     return appSettings;
   } else {
-    return null;
+    return DEFAULT_APP_SETTINGS;
   }
 };
 
 export const resetAppSettings = async () => {
   await AsyncStorage.setItem(
     LocalStorageKeys.APP_SETTINGS,
-    JSON.stringify({ isDatabaseLiveEdits: false })
+    JSON.stringify(DEFAULT_APP_SETTINGS)
   );
 
-  return { isDatabaseLiveEdits: false };
+  return DEFAULT_APP_SETTINGS;
 };

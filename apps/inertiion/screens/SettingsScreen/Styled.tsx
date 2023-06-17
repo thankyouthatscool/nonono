@@ -19,21 +19,20 @@ export const HeaderWrapper: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-export const SingleToggleSettingWrapper: FC<PropsWithChildren> = ({
-  children,
-}) => {
+export const ItemWrapper: FC<
+  PropsWithChildren<{ isFirst?: boolean; isLast?: boolean }>
+> = ({ children, isFirst, isLast }) => {
   return (
-    <Card style={{ margin: DEFAULT_APP_PADDING }}>
-      <Card.Content>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          {children}
-        </View>
-      </Card.Content>
-    </Card>
+    <View
+      style={{
+        alignItems: "center",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: isFirst ? 0 : DEFAULT_APP_PADDING / 2,
+        marginBottom: isLast ? 0 : DEFAULT_APP_PADDING / 2,
+      }}
+    >
+      {children}
+    </View>
   );
 };

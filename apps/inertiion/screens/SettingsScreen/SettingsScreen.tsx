@@ -1,96 +1,89 @@
-import Checkbox from "expo-checkbox";
-import { FC, useCallback, useEffect, useState } from "react";
-import { IconButton, Menu, Text } from "react-native-paper";
+// import Checkbox from "expo-checkbox";
+import { FC, useEffect, useState } from "react";
+import { ScrollView, View } from "react-native";
+import { Card, Checkbox, IconButton, Menu, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { SettingsScreenNavigationProps } from "@types";
-import {
-  AppSettings,
-  getAppSettings,
-  resetAppSettings,
-  setAppSettings,
-} from "@utils";
+import { useAppDispatch, useAppSelector } from "@hooks";
+import { resetAppSettings, setAppSettings } from "@store";
+import { DEFAULT_APP_PADDING } from "@theme";
+import { AppSettingsKeys, SettingsScreenNavigationProps } from "@types";
 
-import { HeaderWrapper, SingleToggleSettingWrapper } from "./Styled";
+import { HeaderWrapper, ItemWrapper } from "./Styled";
+
+// TODO: Native Stack Here
 
 export const SettingsScreen: FC<SettingsScreenNavigationProps> = ({
   navigation,
 }) => {
-  const [appSettings, setAppSettings] = useState<{
-    isDatabaseLiveEdits: boolean;
-  } | null>(null);
+  const dispatch = useAppDispatch();
+
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    (async () => {
-      const appSettings = await getAppSettings();
-
-      if (!!appSettings) {
-        setAppSettings(() => appSettings);
-      }
-    })();
-  }, []);
+  const { appSettings } = useAppSelector(({ app }) => ({ ...app }));
 
   return (
     <SafeAreaView>
-      <HeaderWrapper>
-        <Text variant="headlineLarge">Settings</Text>
-        <Menu
-          anchor={
-            <IconButton
-              icon="dots-vertical"
-              onPress={() => setIsMenuOpen(() => true)}
+      <ScrollView>
+        <HeaderWrapper>
+          <Text variant="headlineLarge">Settings</Text>
+          <Menu
+            anchor={
+              <IconButton
+                icon="dots-vertical"
+                onPress={() => setIsMenuOpen(() => true)}
+              />
+            }
+            onDismiss={() => setIsMenuOpen(() => false)}
+            visible={isMenuOpen}
+          >
+            <Menu.Item
+              onPress={async () => {
+                dispatch(resetAppSettings());
+
+                setIsMenuOpen(() => false);
+              }}
+              title="Reset Defaults"
             />
-          }
-          onDismiss={() => setIsMenuOpen(() => false)}
-          visible={isMenuOpen}
+          </Menu>
+        </HeaderWrapper>
+        <Card
+          style={{
+            margin: DEFAULT_APP_PADDING,
+            marginTop: DEFAULT_APP_PADDING / 2,
+            marginBottom: DEFAULT_APP_PADDING / 2,
+          }}
         >
-          <Menu.Item
-            onPress={async () => {
-              const appSettings = await resetAppSettings();
-
-              setTimeout(() => {
-                setAppSettings(() => null);
-              }, 1);
-
-              setAppSettings(() => appSettings);
-
-              setIsMenuOpen(() => false);
-            }}
-            title="Reset Defaults"
-          />
-        </Menu>
-      </HeaderWrapper>
-      <LiveDatabaseEditSetting
-        isOptionEnabled={appSettings?.isDatabaseLiveEdits}
-      />
+          <Card.Content>
+            <ItemWrapper isFirst>
+              <Text>Database Management</Text>
+              <IconButton
+                icon="chevron-right"
+                mode="contained"
+                onPress={() => {}}
+              />
+            </ItemWrapper>
+            <ItemWrapper isLast>
+              <Text>Live Database Edit</Text>
+              <Checkbox
+                onPress={() => {
+                  dispatch(
+                    setAppSettings({
+                      key: AppSettingsKeys.IS_DATABASE_LIVE_EDIT_ENABLED,
+                      data: !appSettings.isDatabaseLiveEditEnabled,
+                    })
+                  );
+                }}
+                status={
+                  !!appSettings.isDatabaseLiveEditEnabled
+                    ? "checked"
+                    : "unchecked"
+                }
+              />
+            </ItemWrapper>
+          </Card.Content>
+        </Card>
+      </ScrollView>
     </SafeAreaView>
-  );
-};
-
-export const LiveDatabaseEditSetting: FC<{
-  isOptionEnabled: boolean | undefined;
-}> = ({ isOptionEnabled }) => {
-  const [isChecked, setIsChecked] = useState<boolean>(!!isOptionEnabled);
-
-  const handleValueChange = useCallback((newValue: boolean) => {
-    setIsChecked(() => newValue);
-
-    setAppSettings(AppSettings.IS_DATABASE_LIVE_EDITS, newValue);
-  }, []);
-
-  useEffect(() => {
-    setIsChecked(() => !!isOptionEnabled);
-  }, [isOptionEnabled]);
-
-  useEffect(() => {
-    console.log(isOptionEnabled);
-  }, [isOptionEnabled]);
-
-  return (
-    <SingleToggleSettingWrapper>
-      <Text>Live Database Edits</Text>
-      <Checkbox onValueChange={handleValueChange} value={isChecked} />
-    </SingleToggleSettingWrapper>
   );
 };
