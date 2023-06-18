@@ -15,8 +15,13 @@ import {
 
 const initialState: AppState = {
   appSettings: DEFAULT_APP_SETTINGS,
+
   bottomSheetContent: null,
+
+  currentScreen: undefined,
+
   databaseInstance: SQLite.openDatabase("inertiion.db"),
+
   searchResultCatalog: [],
   searchResultStorage: [],
   searchTerm: "",
@@ -32,6 +37,14 @@ export const appSlice = createSlice({
       { payload }: PayloadAction<BottomSheetContent>
     ) => {
       state.bottomSheetContent = payload;
+    },
+
+    // Current Screen
+    setCurrentScreen: (
+      state,
+      { payload }: PayloadAction<string | undefined>
+    ) => {
+      state.currentScreen = payload;
     },
 
     // Search Results
@@ -81,6 +94,9 @@ export const resetAppSettings = createAsyncThunk(
 export const {
   // Bottom Sheet Content
   setBottomSheetContent,
+
+  // Current Screen
+  setCurrentScreen,
 
   // Search Results
   setSearchResultCatalog,
