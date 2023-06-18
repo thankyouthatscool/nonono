@@ -34,11 +34,6 @@ export const SettingsScreen: FC<SettingsScreenNavigationProps> = () => {
       <SettingsScreenStack.Screen
         component={DatabaseManagementScreen}
         name="DatabaseManagementScreen"
-        options={{
-          // TODO: Make own headers.
-          headerShown: true,
-          title: "Database Management",
-        }}
       />
     </SettingsScreenStack.Navigator>
   );
@@ -55,29 +50,29 @@ export const SettingsScreenRoot: FC<SettingsScreenRootProps> = ({
 
   return (
     <SafeAreaView>
-      <ScrollView>
-        <HeaderWrapper>
-          <Text variant="headlineLarge">Settings</Text>
-          <Menu
-            anchor={
-              <IconButton
-                icon="dots-vertical"
-                onPress={() => setIsMenuOpen(() => true)}
-              />
-            }
-            onDismiss={() => setIsMenuOpen(() => false)}
-            visible={isMenuOpen}
-          >
-            <Menu.Item
-              onPress={async () => {
-                dispatch(resetAppSettings());
-
-                setIsMenuOpen(() => false);
-              }}
-              title="Reset Defaults"
+      <HeaderWrapper>
+        <Text variant="headlineLarge">Settings</Text>
+        <Menu
+          anchor={
+            <IconButton
+              icon="dots-vertical"
+              onPress={() => setIsMenuOpen(() => true)}
             />
-          </Menu>
-        </HeaderWrapper>
+          }
+          onDismiss={() => setIsMenuOpen(() => false)}
+          visible={isMenuOpen}
+        >
+          <Menu.Item
+            onPress={async () => {
+              dispatch(resetAppSettings());
+
+              setIsMenuOpen(() => false);
+            }}
+            title="Reset Defaults"
+          />
+        </Menu>
+      </HeaderWrapper>
+      <ScrollView>
         <Card
           style={{
             margin: DEFAULT_APP_PADDING,

@@ -10,15 +10,18 @@ import {
   Snackbar,
   Text,
 } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAppSelector } from "@hooks";
-import { setCurrentScreen } from "@store";
 import { DEFAULT_APP_PADDING } from "@theme";
 import type {
   DatabaseManagementScreenRootProps,
   DatabaseManagementScreenStackProps,
+  LocalDatabasesScreenProps,
 } from "@types";
 import { trpc } from "@utils";
+
+import { HeaderWrapper } from "./Styled";
 
 const DatabaseManagementScreenStack =
   createNativeStackNavigator<DatabaseManagementScreenStackProps>();
@@ -43,7 +46,9 @@ export const DatabaseManagementScreen = () => {
   );
 };
 
-export const LocalDatabasesScreen = () => {
+export const LocalDatabasesScreen: FC<LocalDatabasesScreenProps> = ({
+  navigation,
+}) => {
   const { databaseInstance: db } = useAppSelector(({ app }) => ({ ...app }));
 
   const [localDatabases, setLocalDatabases] = useState<string[]>([]);
@@ -67,25 +72,51 @@ export const LocalDatabasesScreen = () => {
   }, []);
 
   return (
-    <View>
+    <SafeAreaView>
+      <HeaderWrapper>
+        <IconButton
+          icon="chevron-left"
+          mode="contained"
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
+        <Text variant="titleLarge">Local Databases</Text>
+      </HeaderWrapper>
       <Text>Local Databases</Text>
       {localDatabases.map((table) => (
         <Text key={table}>{table}</Text>
       ))}
-    </View>
+    </SafeAreaView>
   );
 };
 
 export const DatabaseManagementScreenRoot: FC<
   DatabaseManagementScreenRootProps
 > = ({ navigation }) => {
-  const { refetch } = trpc.test.useQuery(undefined, { enabled: false });
+  const { refetch: refetchTest } = trpc.test.useQuery(undefined, {
+    enabled: false,
+  });
+  const { refetch: getCatalogDataRefetch } = trpc.getCatalogData.useQuery(
+    undefined,
+    { enabled: false }
+  );
 
   const [isSnackbarVisible, setIsSnackbarVisible] = useState<boolean>(false);
   const [snackbarContent, setSnackbarContent] = useState<string>("");
 
   return (
-    <View style={{ height: "100%" }}>
+    <SafeAreaView style={{ height: "100%" }}>
+      <HeaderWrapper>
+        <IconButton
+          icon="chevron-left"
+          mode="contained"
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
+        <Text variant="titleLarge">Database Management</Text>
+      </HeaderWrapper>
       <ScrollView>
         <Card style={{ margin: DEFAULT_APP_PADDING, marginBottom: 0 }}>
           <Card.Content
@@ -100,7 +131,7 @@ export const DatabaseManagementScreenRoot: FC<
               icon="connection"
               mode="contained"
               onPress={async () => {
-                const { data } = await refetch();
+                const { data } = await refetchTest();
 
                 if (data === "OK") {
                   setSnackbarContent(() => "Connection OK");
@@ -129,12 +160,35 @@ export const DatabaseManagementScreenRoot: FC<
                 onPress={() => navigation.navigate("LocalDatabasesScreen")}
               />
             </View>
-            <View>
+            <View
+              style={{
+                alignItems: "center",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
               <Text>Delete Local Databases</Text>
+              <IconButton icon="delete" iconColor="red" mode="contained" />
             </View>
             <Divider />
-            <View>
+            <View
+              style={{
+                alignItems: "center",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
               <Text>Seed Local Databases</Text>
+              <IconButton
+                icon="seed"
+                iconColor="green"
+                mode="contained"
+                onPress={async () => {
+                  const { data } = await getCatalogDataRefetch();
+
+                  console.log(data?.[0]);
+                }}
+              />
             </View>
           </Card.Content>
         </Card>
@@ -149,6 +203,6 @@ export const DatabaseManagementScreenRoot: FC<
       >
         {snackbarContent}
       </Snackbar>
-    </View>
+    </SafeAreaView>
   );
 };

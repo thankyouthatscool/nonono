@@ -12,13 +12,8 @@ export type BottomSheetContent = "newCatalogItem" | "newNote" | null;
 
 export type AppState = {
   appSettings: AppSettings;
-
   bottomSheetContent: BottomSheetContent;
-
-  currentScreen: string | undefined;
-
   databaseInstance: SQLite.WebSQLDatabase;
-
   searchResultCatalog: string[];
   searchResultStorage: string[];
   searchTerm: string;

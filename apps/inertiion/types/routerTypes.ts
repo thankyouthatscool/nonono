@@ -39,3 +39,8 @@ export type DatabaseManagementScreenRootProps = NativeStackScreenProps<
   DatabaseManagementScreenStackProps,
   "DatabaseManagementScreenRoot"
 >;
+
+export type LocalDatabasesScreenProps = NativeStackScreenProps<
+  DatabaseManagementScreenStackProps,
+  "LocalDatabasesScreen"
+>;
