@@ -13,11 +13,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAppSelector } from "@hooks";
+import { LocalDatabasesScreen } from "@screens/LocalDatabasesScreen";
 import { DEFAULT_APP_PADDING } from "@theme";
 import type {
   DatabaseManagementScreenRootProps,
   DatabaseManagementScreenStackProps,
-  LocalDatabasesScreenProps,
 } from "@types";
 import { trpc } from "@utils";
 
@@ -46,54 +46,11 @@ export const DatabaseManagementScreen = () => {
   );
 };
 
-export const LocalDatabasesScreen: FC<LocalDatabasesScreenProps> = ({
-  navigation,
-}) => {
-  const { databaseInstance: db } = useAppSelector(({ app }) => ({ ...app }));
-
-  const [localDatabases, setLocalDatabases] = useState<string[]>([]);
-
-  useEffect(() => {
-    db.transaction(
-      (tx) => {
-        tx.executeSql(
-          "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE 'android_%'",
-          [],
-          (_, { rows: { _array } }) => {
-            console.log(_array.map((table) => table.name));
-            setLocalDatabases(() => _array.map((table) => table.name));
-          }
-        );
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }, []);
-
-  return (
-    <SafeAreaView>
-      <HeaderWrapper>
-        <IconButton
-          icon="chevron-left"
-          mode="contained"
-          onPress={() => {
-            navigation.goBack();
-          }}
-        />
-        <Text variant="titleLarge">Local Databases</Text>
-      </HeaderWrapper>
-      <Text>Local Databases</Text>
-      {localDatabases.map((table) => (
-        <Text key={table}>{table}</Text>
-      ))}
-    </SafeAreaView>
-  );
-};
-
 export const DatabaseManagementScreenRoot: FC<
   DatabaseManagementScreenRootProps
 > = ({ navigation }) => {
+  const { databaseInstance: db } = useAppSelector(({ app }) => ({ ...app }));
+
   const { refetch: refetchTest } = trpc.test.useQuery(undefined, {
     enabled: false,
   });
@@ -186,7 +143,79 @@ export const DatabaseManagementScreenRoot: FC<
                 onPress={async () => {
                   const { data } = await getCatalogDataRefetch();
 
-                  console.log(data?.[0]);
+                  const testData = data;
+
+                  console.log(testData);
+                  console.log("+++");
+
+                  const seedArray = testData
+                    ?.map(
+                      ({
+                        itemId,
+                        code,
+                        color,
+                        size,
+                        description,
+                        location,
+                        dateCreated,
+                        dateModified,
+                      }) => [
+                        itemId,
+                        code,
+                        color,
+                        size,
+                        description,
+                        location,
+                        dateCreated,
+                        dateModified,
+                      ]
+                    )
+                    .reduce((acc, val) => [...acc, ...val], [] as string[]);
+
+                  console.log(seedArray);
+
+                  db.transaction(
+                    (tx) => {
+                      tx.executeSql("DELETE FROM catalogItems");
+
+                      tx.executeSql(
+                        `
+                        INSERT INTO catalogItems (itemId, code, color, size, description, location, dateCreated, dateModified)
+                        VALUES ${testData?.map(
+                          (_, idx) => `(?, ?, ?, ?, ?, ?, ?, ?)`
+                        )}`,
+                        seedArray,
+                        (_, { rows }) => {
+                          console.log(rows);
+                        }
+                      );
+                    },
+                    (err) => console.log(err)
+                  );
+
+                  // db.transaction(
+                  //   (tx) => {
+                  //     tx.executeSql(
+                  //       `
+                  //     INSERT INTO catalogItems (itemId, code, color, size, description, location, dateCreated, dateModified)
+                  //     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                  //       [
+                  //         itemId,
+                  //         code,
+                  //         color,
+                  //         size,
+                  //         description,
+                  //         location,
+                  //         dateCreated,
+                  //         dateModified,
+                  //       ],
+                  //       (_, { rows: { _array } }) => {
+                  //         console.log(_array);
+                  //       }
+                  //     );
+                  //   },
+                  //   (err) => console.log(err)
+                  // );
                 }}
               />
             </View>
