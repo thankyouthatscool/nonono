@@ -10,12 +10,14 @@ export const getMonthInformation = (year: number, month: number) => {
     shortName: MONTHS[month].shortMonthName,
     numberOfDays,
     firstDay: DAYS_OF_WEEK[firstDay],
+    firstDayIndex: firstDay,
     lastDay: DAYS_OF_WEEK[lastDay],
+    lastDayIndex: lastDay,
   };
 };
 
 export const getMonthName = (monthNumber: number) => {
-  return { 5: "June", 6: "July" }[monthNumber] || "";
+  return MONTHS[monthNumber].fullMonthName || "";
 };
 
 export const getWeekdayName = (weekdayNumber: number) => {

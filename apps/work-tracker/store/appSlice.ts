@@ -1,6 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { AppState, CurrentDateInformation } from "@types";
+import {
+  AppState,
+  CurrentDateInformation,
+  SelectedDate,
+  TouchedDate,
+} from "@types";
 
 const dateInstance = new Date();
 
@@ -36,10 +41,11 @@ const initialState: AppState = {
   },
   isLoading: true,
   selectedDate: {
-    date: CURRENT_DATE,
-    month: CURRENT_MONTH,
-    year: CURRENT_YEAR,
+    SELECTED_DATE: CURRENT_DATE,
+    SELECTED_MONTH: CURRENT_MONTH,
+    SELECTED_YEAR: CURRENT_YEAR,
   },
+  touchedDate: null,
 };
 
 export const appSlice = createSlice({
@@ -55,7 +61,22 @@ export const appSlice = createSlice({
     setIsLoading: (state, { payload }: PayloadAction<boolean>) => {
       state.isLoading = payload;
     },
+
+    // Selected date
+    setSelectedDate: (state, { payload }: PayloadAction<SelectedDate>) => {
+      state.selectedDate = payload;
+    },
+
+    // Touched date
+    setTouchedDate: (state, { payload }: PayloadAction<TouchedDate>) => {
+      state.touchedDate = payload;
+    },
   },
 });
 
-export const { setCurrentDateInformation, setIsLoading } = appSlice.actions;
+export const {
+  setCurrentDateInformation,
+  setIsLoading,
+  setSelectedDate,
+  setTouchedDate,
+} = appSlice.actions;

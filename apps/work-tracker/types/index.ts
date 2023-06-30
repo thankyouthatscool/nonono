@@ -8,12 +8,21 @@ export type CurrentDateInformation = {
   CURRENT_MONTH_LAST_DAY: number;
 };
 
+export type SelectedDate = {
+  SELECTED_DATE: number;
+  SELECTED_MONTH: number;
+  SELECTED_YEAR: number;
+};
+
+export type TouchedDate = {
+  SELECTED_DATE: number;
+  SELECTED_MONTH: number;
+  SELECTED_YEAR: number;
+} | null;
+
 export type AppState = {
   currentDateInformation: CurrentDateInformation;
   isLoading: boolean;
-  selectedDate: {
-    date: number;
-    month: number;
-    year: number;
-  };
+  selectedDate: SelectedDate;
+  touchedDate: TouchedDate;
 };
