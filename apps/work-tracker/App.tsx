@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
+import { PaperProvider } from "react-native-paper";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { AppRoot } from "@components/AppRoot";
@@ -8,10 +9,12 @@ import { store } from "@store";
 export const App = () => {
   return (
     <ReduxProvider store={store}>
-      <View style={styles.container}>
-        <AppRoot />
-        <StatusBar style="auto" />
-      </View>
+      <PaperProvider>
+        <View style={styles.container}>
+          <AppRoot />
+          <StatusBar style="auto" />
+        </View>
+      </PaperProvider>
     </ReduxProvider>
   );
 };

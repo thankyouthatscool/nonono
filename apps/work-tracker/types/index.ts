@@ -26,3 +26,9 @@ export type AppState = {
   selectedDate: SelectedDate;
   touchedDate: TouchedDate;
 };
+
+export type DayInformation = {
+  hoursWorked: number;
+  hourlyRate: number;
+  comments: string;
+};

@@ -1,10 +1,12 @@
-import { FC, PropsWithChildren, useCallback, useEffect, useRef } from "react";
+import { FC, PropsWithChildren, useCallback, useEffect, useState } from "react";
 import { Dimensions, Pressable, View } from "react-native";
-import { Button, IconButton, Text } from "react-native-paper";
+import { IconButton, Modal, Portal, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { DayModal } from "@components/DayModal";
 import { useAppDispatch, useAppSelector } from "@hooks";
 import { setSelectedDate, setTouchedDate } from "@store";
+import { APP_PADDING } from "@theme";
 import {
   formatDateString,
   getMonthInformation,
@@ -13,10 +15,13 @@ import {
 } from "@utils";
 
 const { width: WINDOW_WIDTH } = Dimensions.get("window");
-const PADDING = 8;
 
 export const MonthsCarousel: FC<PropsWithChildren> = () => {
   const dispatch = useAppDispatch();
+
+  const [selectedMonthInformation, setSelectedMonthInformation] = useState<
+    ReturnType<typeof getMonthInformation> | undefined
+  >(undefined);
 
   const {
     currentDateInformation: {
@@ -96,135 +101,118 @@ export const MonthsCarousel: FC<PropsWithChildren> = () => {
     ]
   );
 
+  useEffect(() => {
+    if (!!SELECTED_MONTH && !!SELECTED_YEAR) {
+      console.log(
+        `Getting month information for ${SELECTED_MONTH}/${SELECTED_YEAR}...`
+      );
+
+      setSelectedMonthInformation(() =>
+        getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
+      );
+    }
+  }, [SELECTED_MONTH, SELECTED_YEAR]);
+
   return (
     <SafeAreaView style={{ flex: 1, width: "100%", padding: 8 }}>
       {!!isLoading ? (
         <Text>Loading...</Text>
-      ) : (
+      ) : !!selectedMonthInformation ? (
         <View style={{ justifyContent: "space-between", flex: 1 }}>
+          <Text variant="titleLarge">
+            {getWeekdayName(CURRENT_WEEK_DAY)}, {getMonthName(CURRENT_MONTH)}{" "}
+            {formatDateString(CURRENT_DATE)}, {CURRENT_YEAR}
+          </Text>
           <View>
-            <Text>
-              {getWeekdayName(CURRENT_WEEK_DAY)}, {getMonthName(CURRENT_MONTH)}{" "}
-              {formatDateString(CURRENT_DATE)}, {CURRENT_YEAR}
+            <Text
+              style={{ textAlign: "center", paddingBottom: APP_PADDING }}
+              variant="titleSmall"
+            >
+              {getMonthName(SELECTED_MONTH)}/{SELECTED_YEAR}
             </Text>
-            <Text>
-              {getMonthName(SELECTED_MONTH)} - {SELECTED_YEAR}
-            </Text>
-            <Text variant="titleLarge">Selected Month Information</Text>
-            <Text>
-              Number of days:{" "}
-              {getMonthInformation(SELECTED_YEAR, SELECTED_MONTH).numberOfDays}
-            </Text>
-            <Text>
-              First day:{" "}
-              {getMonthInformation(SELECTED_YEAR, SELECTED_MONTH).firstDay}
-            </Text>
-            <Text>
-              Last day:{" "}
-              {getMonthInformation(SELECTED_YEAR, SELECTED_MONTH).lastDay}
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
-              width: WINDOW_WIDTH - PADDING * 2,
-            }}
-          >
-            {Array.from({
-              length:
-                getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
-                  .numberOfDays +
-                getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
-                  .firstDayIndex +
-                6 -
-                getMonthInformation(SELECTED_YEAR, SELECTED_MONTH).lastDayIndex,
-            })
-              .map((_, idx) => idx)
-              .map((idx) => (
-                <Pressable
-                  key={idx}
-                  onPress={() => {
-                    if (
-                      idx -
-                        getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
-                          .firstDayIndex >=
-                        0 &&
-                      idx -
-                        getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
-                          .firstDayIndex <
-                        getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
-                          .numberOfDays
-                    ) {
-                      const NEW_SELECTED_DATE =
-                        idx +
-                        1 -
-                        getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
-                          .firstDayIndex;
+            <View
+              style={{
+                flexDirection: "row",
+                flexWrap: "wrap",
+                width: WINDOW_WIDTH - APP_PADDING * 2,
+              }}
+            >
+              {Array.from({
+                length:
+                  selectedMonthInformation.numberOfDays +
+                  selectedMonthInformation.firstDayIndex +
+                  6 -
+                  selectedMonthInformation.lastDayIndex,
+              })
+                .map((_, idx) => idx)
+                .map((idx) => (
+                  <Pressable
+                    key={idx}
+                    onPress={() => {
+                      if (
+                        idx - selectedMonthInformation.firstDayIndex >= 0 &&
+                        idx - selectedMonthInformation.firstDayIndex <
+                          selectedMonthInformation.numberOfDays
+                      ) {
+                        const NEW_SELECTED_DATE =
+                          idx + 1 - selectedMonthInformation.firstDayIndex;
 
-                      dispatch(
-                        setTouchedDate({
-                          SELECTED_DATE: NEW_SELECTED_DATE,
-                          SELECTED_MONTH,
-                          SELECTED_YEAR,
-                        })
-                      );
-                    }
-                  }}
-                >
-                  <View
-                    style={{
-                      alignItems: "center",
-                      backgroundColor:
+                        dispatch(
+                          setTouchedDate({
+                            SELECTED_DATE: NEW_SELECTED_DATE,
+                            SELECTED_MONTH,
+                            SELECTED_YEAR,
+                          })
+                        );
+                      }
+                    }}
+                    onLongPress={() => {
+                      dispatch(setTouchedDate(null));
+
+                      console.log(
                         `${
-                          idx +
-                          1 -
-                          getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
-                            .firstDayIndex
-                        }-${SELECTED_MONTH}-${SELECTED_YEAR}` ===
-                        `${touchedDate?.SELECTED_DATE}-${touchedDate?.SELECTED_MONTH}-${touchedDate?.SELECTED_YEAR}`
-                          ? "green"
-                          : "white",
-                      borderColor:
-                        idx <
-                        getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
-                          .firstDayIndex
-                          ? "rgba(1, 1, 1, 0.1)"
-                          : idx -
-                              getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
-                                .firstDayIndex >=
-                            getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
-                              .numberOfDays
-                          ? "rgba(1, 1, 1, 0.1)"
-                          : "black",
-                      borderRadius: 50,
-                      borderWidth: 1,
-                      height: (WINDOW_WIDTH - PADDING * 2) / 7,
-                      justifyContent: "center",
-                      width: (WINDOW_WIDTH - PADDING * 2) / 7,
+                          idx + 1 - selectedMonthInformation.firstDayIndex
+                        }/${SELECTED_MONTH}/${SELECTED_YEAR} - will be okayed`
+                      );
                     }}
                   >
-                    <Text>
-                      {idx <
-                        getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
-                          .firstDayIndex ||
-                      idx -
-                        getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
-                          .firstDayIndex >=
-                        getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
-                          .numberOfDays
-                        ? ""
-                        : `${
-                            idx +
-                            1 -
-                            getMonthInformation(SELECTED_YEAR, SELECTED_MONTH)
-                              .firstDayIndex
-                          }`}
-                    </Text>
-                  </View>
-                </Pressable>
-              ))}
+                    <View
+                      style={{
+                        alignItems: "center",
+                        borderColor:
+                          idx < selectedMonthInformation.firstDayIndex
+                            ? "rgba(1, 1, 1, 0.1)"
+                            : idx - selectedMonthInformation.firstDayIndex >=
+                              selectedMonthInformation.numberOfDays
+                            ? "rgba(1, 1, 1, 0.1)"
+                            : `${
+                                idx + 1 - selectedMonthInformation.firstDayIndex
+                              }-${SELECTED_MONTH}-${SELECTED_YEAR}` ===
+                              `${touchedDate?.SELECTED_DATE}-${touchedDate?.SELECTED_MONTH}-${touchedDate?.SELECTED_YEAR}`
+                            ? "green"
+                            : "rgba(1, 1, 1, 0.25)",
+                        borderRadius: 50,
+                        borderWidth: 1,
+                        height: (WINDOW_WIDTH - APP_PADDING * 2) / 7,
+                        justifyContent: "center",
+                        width: (WINDOW_WIDTH - APP_PADDING * 2) / 7,
+                      }}
+                    >
+                      <Text>
+                        {idx < selectedMonthInformation.firstDayIndex ||
+                        idx - selectedMonthInformation.firstDayIndex >=
+                          selectedMonthInformation.numberOfDays
+                          ? ""
+                          : `${
+                              idx + 1 - selectedMonthInformation.firstDayIndex
+                            }`}
+                      </Text>
+                    </View>
+                  </Pressable>
+                ))}
+            </View>
           </View>
+
           <View
             style={{
               alignItems: "center",
@@ -256,7 +244,10 @@ export const MonthsCarousel: FC<PropsWithChildren> = () => {
               }}
             />
           </View>
+          <DayModal />
         </View>
+      ) : (
+        <View />
       )}
     </SafeAreaView>
   );
