@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "start": "dotenv -e .env expo start -c",
-    "build:android:preview": "yarn eas build -p android --profile preview --no-wait"
+    "build:android:preview": "yarn eas build -p android --profile preview --no-wait",
+    "bap": "yarn build:android:preview"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
