@@ -5,7 +5,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAppDispatch, useAppSelector } from "@hooks";
 import { setSelectedDate, setTouchedDate } from "@store";
-import { getMonthInformation, getMonthName, getWeekdayName } from "@utils";
+import {
+  formatDateString,
+  getMonthInformation,
+  getMonthName,
+  getWeekdayName,
+} from "@utils";
 
 const { width: WINDOW_WIDTH } = Dimensions.get("window");
 const PADDING = 8;
@@ -99,8 +104,8 @@ export const MonthsCarousel: FC<PropsWithChildren> = () => {
         <View style={{ justifyContent: "space-between", flex: 1 }}>
           <View>
             <Text>
-              {getWeekdayName(CURRENT_WEEK_DAY)}, {CURRENT_DATE}{" "}
-              {getMonthName(CURRENT_MONTH)} - {CURRENT_YEAR}
+              {getWeekdayName(CURRENT_WEEK_DAY)}, {getMonthName(CURRENT_MONTH)}{" "}
+              {formatDateString(CURRENT_DATE)}, {CURRENT_YEAR}
             </Text>
             <Text>
               {getMonthName(SELECTED_MONTH)} - {SELECTED_YEAR}

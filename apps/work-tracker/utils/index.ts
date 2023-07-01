@@ -1,5 +1,18 @@
 import { DAYS_OF_WEEK, MONTHS } from "@constants";
 
+export const formatDateString = (date: number) => {
+  switch (date) {
+    default:
+      return `${date}th`;
+    case 1:
+      return `${date}st`;
+    case 2:
+      return `${date}nd`;
+    case 3:
+      return `${date}rd`;
+  }
+};
+
 export const getMonthInformation = (year: number, month: number) => {
   const numberOfDays = new Date(year, month + 1, 0).getDate();
   const firstDay = new Date(year, month, 0).getDay();
