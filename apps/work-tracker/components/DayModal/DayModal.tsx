@@ -71,6 +71,7 @@ export const DayModal = () => {
                 <TextInput
                   keyboardType="numeric"
                   label="Hours worked"
+                  mode="outlined"
                   onChangeText={(e) => {
                     console.log(e);
                     if (e === "") {
@@ -90,7 +91,6 @@ export const DayModal = () => {
                   style={{
                     flex: 1,
                     marginTop: APP_PADDING,
-                    marginBottom: APP_PADDING,
                   }}
                   value={dayInformation.hoursWorked.toString()}
                 />
@@ -111,6 +111,7 @@ export const DayModal = () => {
                 <TextInput
                   keyboardType="numeric"
                   label="Hourly rate"
+                  mode="outlined"
                   onChangeText={(e) => {
                     if (e === "") {
                       return setDayInformation((dayInformation) => ({
@@ -144,6 +145,7 @@ export const DayModal = () => {
               </RowContainer>
               <TextInput
                 label="Comments"
+                mode="outlined"
                 multiline
                 numberOfLines={4}
                 style={{ marginBottom: APP_PADDING }}

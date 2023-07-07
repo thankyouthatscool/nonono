@@ -128,7 +128,7 @@ export const MonthsCarousel: FC<PropsWithChildren> = () => {
               style={{ textAlign: "center", paddingBottom: APP_PADDING }}
               variant="titleSmall"
             >
-              {getMonthName(SELECTED_MONTH)}/{SELECTED_YEAR}
+              {getMonthName(SELECTED_MONTH)}, {SELECTED_YEAR}
             </Text>
             <View
               style={{
@@ -178,41 +178,49 @@ export const MonthsCarousel: FC<PropsWithChildren> = () => {
                   >
                     <View
                       style={{
-                        alignItems: "center",
-                        borderColor:
-                          idx < selectedMonthInformation.firstDayIndex
-                            ? "rgba(1, 1, 1, 0.1)"
-                            : idx - selectedMonthInformation.firstDayIndex >=
-                              selectedMonthInformation.numberOfDays
-                            ? "rgba(1, 1, 1, 0.1)"
-                            : `${
-                                idx + 1 - selectedMonthInformation.firstDayIndex
-                              }-${SELECTED_MONTH}-${SELECTED_YEAR}` ===
-                              `${touchedDate?.SELECTED_DATE}-${touchedDate?.SELECTED_MONTH}-${touchedDate?.SELECTED_YEAR}`
-                            ? "green"
-                            : "rgba(1, 1, 1, 0.25)",
-                        borderRadius: 50,
-                        borderWidth: 1,
                         height: (WINDOW_WIDTH - APP_PADDING * 2) / 7,
-                        justifyContent: "center",
                         width: (WINDOW_WIDTH - APP_PADDING * 2) / 7,
                       }}
                     >
-                      <Text>
-                        {idx < selectedMonthInformation.firstDayIndex ||
-                        idx - selectedMonthInformation.firstDayIndex >=
-                          selectedMonthInformation.numberOfDays
-                          ? ""
-                          : `${
-                              idx + 1 - selectedMonthInformation.firstDayIndex
-                            }`}
-                      </Text>
+                      <View
+                        style={{
+                          alignItems: "center",
+                          borderColor:
+                            idx < selectedMonthInformation.firstDayIndex
+                              ? "rgba(1, 1, 1, 0.1)"
+                              : idx - selectedMonthInformation.firstDayIndex >=
+                                selectedMonthInformation.numberOfDays
+                              ? "rgba(1, 1, 1, 0.1)"
+                              : `${
+                                  idx +
+                                  1 -
+                                  selectedMonthInformation.firstDayIndex
+                                }-${SELECTED_MONTH}-${SELECTED_YEAR}` ===
+                                `${touchedDate?.SELECTED_DATE}-${touchedDate?.SELECTED_MONTH}-${touchedDate?.SELECTED_YEAR}`
+                              ? "green"
+                              : "rgba(1, 1, 1, 0.25)",
+                          borderRadius: 50,
+                          borderWidth: 1,
+                          justifyContent: "center",
+                          height: 45,
+                          width: 45,
+                        }}
+                      >
+                        <Text>
+                          {idx < selectedMonthInformation.firstDayIndex ||
+                          idx - selectedMonthInformation.firstDayIndex >=
+                            selectedMonthInformation.numberOfDays
+                            ? ""
+                            : `${
+                                idx + 1 - selectedMonthInformation.firstDayIndex
+                              }`}
+                        </Text>
+                      </View>
                     </View>
                   </Pressable>
                 ))}
             </View>
           </View>
-
           <View
             style={{
               alignItems: "center",
